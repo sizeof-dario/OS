@@ -5,14 +5,14 @@ BITS 16
     jmp 0x0000:start
 start:
 
-    ; set ss, ds, and es to 0x0000
+    ; set segment registers to 0x0000 along with sp to set the stack using mov
+    ; ss interrupt shadow feature. The stack is positioned below 0x7C00
     xor ax, ax
-    mov ss, ax ; (sp yet to be set)
+    mov ss, ax
+    mov sp, 0x7C00
     mov ds, ax
     mov es, ax
 
-    ; finish to set the stack (below the master boot record)
-    mov sp, 0x7C00
 
     ; set up registers to query int 0x13
     mov ah, 0x02    ; read

@@ -41,6 +41,45 @@ safe_hlt:
         hlt
         jmp     safe_hlt
 
+; vvv GLOBAL DESCRIPTOR TABLE vvv ----------------------------------------------
+GDT:
+; null segment
+DQ 0
+; code segment
+;       base            = 0x00000000
+;       limit           = 0xFFFFF
+;
+;                         P DPL S E D/C R/A A
+;       access byte     = 1 00  1 1 0   0   0 = 0x98
+;
+;                         G DB L R
+;       flags           = 1 1  0 0 = 0xC
+DW 0xFFFF
+TIMES 3 DB 0x0000
+DB 0x98
+DB 0xCF ; 0xC0 + 0x0F
+DB 0x00
+; data segment
+;       base            = 0x00000000
+;       limit           = 0xFFFFF
+;
+;                         P DPL S E D/C R/A A
+;       access byte     = 1 00  1 0 0   1   0 = 0x92
+;
+;                         G DB L R
+;       flags           = 1 1  0 0 = 0xC
+DW 0xFFFF
+TIMES 3 DB 0x0000
+DB 0x92
+DB 0xCF ; 0xC0 + 0x0F
+DB 0x00
+GDT_end:
+
+GDTR_value:
+DW GDT_end - GDT - 1
+DD GDT
+; ^^^ GLOBAL DESCRIPTOR TABLE ^^^ ----------------------------------------------
+
 TIMES 510 - ($ - $$) DB 0
 DW 0xAA55
 

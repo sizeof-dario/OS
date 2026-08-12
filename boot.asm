@@ -1,22 +1,54 @@
 ORG 0x7C00
 BITS 16
-; vvv SET SEGMENT REGISTERS vvv ------------------------------------------------
+; vvv SET CODE AND STACK REGISTERS vvv -----------------------------------------
 
         ; set cs:ip to 0x0000:0x7C00
         jmp     0x0000:start
 start:
 
-        ; set segment registers to 0x0000 and set the stack
-        ; the stack is set below 0x0000:0x7C00
-        ; the stack is set along with segment registers to ensure proper ss:sp
-        ;       setting via mov ss interrupt shadow feature
+        ; set the stack below 0x0000:0x7C00
         xor     ax,     ax
         mov     ss,     ax
         mov     sp,     0x7C00
-        mov     ds,     ax
-        mov     es,     ax
 
-; ^^^ SET SEGMENT REGISTERS ^^^ ------------------------------------------------
+; ^^^ SET CODE AND STACK REGISTERS ^^^ -----------------------------------------
+
+; CURRENT REGISTERS STATE
+;       ax      bx      cx      dx      cs      ds      es      ss
+;       0x0000  0x????  0x????  0x????  0x0000  0x????  0x????  0x0000
+
+; vvv ENABLE A20 LINE vvv ------------------------------------------------------
+        
+        ; check if A20 line is already enabled
+        mov     es,                     ax
+        mov     ax,                     0xFFFF
+        mov     ds,                     ax
+        mov     WORD[0x7E0E],           0x0000
+        cmp     WORD[es:0x7DFE],        0x55AA
+
+        ; do nothing if already enabled
+        je      A20_enabled
+
+        ; query A20 gate support
+        mov     ax,     0x2403                    
+        int     0x15
+        jc      safe_hlt        ; halt on failure
+        test    ah,     ah
+        jnz     safe_hlt        ; halt on failure
+
+        ; activate A20 gate
+        mov     ax,     0x2401          
+        int     0x15
+        jc      safe_hlt        ; halt on failure
+        test    ah,     ah
+        jnz     safe_hlt        ; halt on failure
+
+A20_enabled:
+; ^^^ ENABLE A20 LINE ^^^ ------------------------------------------------------
+
+; CURRENT REGISTERS STATE
+;       ax      bx      cx      dx      cs      ds      es      ss
+;       0x????  0x????  0x????  0x????  0x0000  0xFFFF  0x0000  0x0000
 
 ; vvv READ SECTOR 2 vvv --------------------------------------------------------
 
@@ -36,6 +68,10 @@ start:
         jc      safe_hlt        ; halt on failure
 
 ; ^^^ READ SECTOR 2 ^^^ --------------------------------------------------------
+
+; CURRENT REGISTERS STATE
+;       ax      bx      cx      dx      cs      ds      es      ss
+;       0x0001  0x7E00  0x0002  0x00??  0x0000  0xFFFF  0x0000  0x0000
 
 safe_hlt:
         hlt

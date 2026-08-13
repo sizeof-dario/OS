@@ -66,6 +66,7 @@ A20_enabled:
 
         int     0x13            
         jc      safe_hlt        ; halt on failure
+        jmp     switch_mode
 
 ; ^^^ READ SECTOR 2 ^^^ --------------------------------------------------------
 
@@ -73,9 +74,38 @@ A20_enabled:
 ;       ax      bx      cx      dx      cs      ds      es      ss
 ;       0x0001  0x7E00  0x0002  0x00??  0x0000  0xFFFF  0x0000  0x0000
 
+
+; 16 BIT SAFE HALT LOOP
 safe_hlt:
         hlt
         jmp     safe_hlt
+
+; vvv SWITCH TO PROTECTED MODE vvv ---------------------------------------------
+switch_mode:
+
+        lgdt    [es:GDTR_value]         ; load gdt
+        cli                             ; disable interrupts
+        ; enter protected mode
+        mov     eax,    cr0             
+        or      eax,    0x00000001
+        mov     cr0,    eax
+        ; far jump at table index 1 in the GDT, RPL = 0, TI = 0
+        jmp     0x0008:start_protected
+
+start_protected:
+; ^^^ SWITCH TO PROTECTED MODE ^^^ ---------------------------------------------
+BITS 32
+
+; CURRENT REGISTERS STATE
+;       eax             ebx             ecx             edx
+;       0x????????      0x????7E00      0x????0002      0x????00??
+;       cs      ds      es      ss
+;       0x0008  0xFFFF  0x0000  0x0000
+
+; 32 BIT SAFE HALT LOOP
+safe_hlt_protected:
+        hlt
+        jmp safe_hlt_protected
 
 ; vvv GLOBAL DESCRIPTOR TABLE vvv ----------------------------------------------
 GDT:

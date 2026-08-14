@@ -65,8 +65,7 @@ A20_enabled:
         mov     bx,     0x7E00  ; destination offset
 
         int     0x13            
-        jc      safe_hlt        ; halt on failure
-        jmp     switch_mode
+        jnc     switch_mode     ; halt on failure
 
 ; ^^^ READ SECTOR 2 ^^^ --------------------------------------------------------
 
@@ -101,6 +100,17 @@ BITS 32
 ;       0x????????      0x????7E00      0x????0002      0x????00??
 ;       cs      ds      es      ss
 ;       0x0008  0xFFFF  0x0000  0x0000
+
+; SET STACK AGAIN
+        mov     ax,     0x0010
+        mov     ss,     ax
+        mov     esp,    0x000A0000      ; below VGA video memory
+
+; CURRENT REGISTERS STATE
+;       eax             ebx             ecx             edx
+;       0x????0010      0x????7E00      0x????0002      0x????00??
+;       cs      ds      es      ss
+;       0x0008  0xFFFF  0x0000  0x0010
 
 ; 32 BIT SAFE HALT LOOP
 safe_hlt_protected:

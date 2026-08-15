@@ -1,4 +1,7 @@
-ORG 0x7C00
+; ORG 0x7C00
+;       not needed anymore since the file gets assembled into a object file
+EXTERN kmain
+
 BITS 16
 ; vvv SET CODE AND STACK REGISTERS vvv -----------------------------------------
 
@@ -58,7 +61,7 @@ A20_enabled:
         ; dl (drive index) is assumed to be set by the BIOS
         ; es (destination segment) is already set to 0x0000
         mov     ah,     0x02    ; read subfunction
-        mov     al,     0x01    ; number of sectors
+        mov     al,     0x09    ; number of sectors (10 - 1)
         mov     ch,     0x00    ; 0-7 cylinder bits
         mov     cl,     0x02    ; 8-9 cylinder bits -> [--][------] <- sector
         mov     dh,     0x00    ; head
@@ -101,16 +104,27 @@ BITS 32
 ;       cs      ds      es      ss
 ;       0x0008  0xFFFF  0x0000  0x0000
 
-; SET STACK AGAIN
+; vvv PREPARE FOR C CODE vvv ---------------------------------------------------
+
+        ; reset stack
         mov     ax,     0x0010
         mov     ss,     ax
         mov     esp,    0x000A0000      ; below VGA video memory
+
+        ; set other segment registers
+        mov     ds,     ax
+        mov     es,     ax
+
+; ^^^ PREPARE FOR C CODE ^^^ ---------------------------------------------------
 
 ; CURRENT REGISTERS STATE
 ;       eax             ebx             ecx             edx
 ;       0x????0010      0x????7E00      0x????0002      0x????00??
 ;       cs      ds      es      ss
-;       0x0008  0xFFFF  0x0000  0x0010
+;       0x0008  0x0010  0x0010  0x0010
+
+; JUMP TO C
+        call    kmain
 
 ; 32 BIT SAFE HALT LOOP
 safe_hlt_protected:
@@ -158,6 +172,3 @@ DD GDT
 
 TIMES 510 - ($ - $$) DB 0
 DW 0xAA55
-
-; SECTOR 2
-TIMES 512 db 0xDC   ; test value

@@ -53,9 +53,9 @@ A20_enabled:
 ;       ax      bx      cx      dx      cs      ds      es      ss
 ;       0x????  0x????  0x????  0x????  0x0000  0xFFFF  0x0000  0x0000
 
-; vvv READ SECTOR 2 vvv --------------------------------------------------------
+; vvv READ 9 EXTRA SECTORS vvv -------------------------------------------------
 
-        ; sector 2 will be placed after MBR at 0x7E00
+        ; sectors will be placed after MBR at 0x7E00
 
         ; set up registers to query int 0x13
         ; dl (drive index) is assumed to be set by the BIOS
@@ -70,7 +70,7 @@ A20_enabled:
         int     0x13            
         jnc     switch_mode     ; halt on failure
 
-; ^^^ READ SECTOR 2 ^^^ --------------------------------------------------------
+; ^^^ READ 9 EXTRA SECTORS ^^^ -------------------------------------------------
 
 ; CURRENT REGISTERS STATE
 ;       ax      bx      cx      dx      cs      ds      es      ss

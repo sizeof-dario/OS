@@ -26,7 +26,7 @@ SECTIONS
         *(.bss)
     }
 
-    /* 1o sectors in total */
+    /* 10 sectors in total */
     . = 0x9000 - 1;
     .padding :
     {

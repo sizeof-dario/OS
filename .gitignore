@@ -56,10 +56,3 @@ dkms.conf
 
 # raw binaries
 *.bin
-
-# extra
-notnow*
-notes
-
-# for gcc control assembly file outputs
-*.s

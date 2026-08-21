@@ -4,37 +4,39 @@
 #include <stdint.h>
 #include "io.h"
 
-#define SCREEN_WIDTH    80
-#define SCREEN_HEIGHT   25
+#define VGA_WIDTH	(uint8_t)80
+#define VGA_HEIGHT	(uint8_t)25
 
-// CRT Controller Registers
+#define CRT_ADDR_REG	(uint16_t)0x03D4
+#define CRT_DATA_REG  	(uint16_t)0x03D5
+/* Cursor location high byte. */
+#define CRT_CURSOR_HIGH	(uint8_t)0x0E 
+/* Cursor location low byte. */  
+#define CRT_CURSOR_LOW	(uint8_t)0x0F
 
-#define CRTCR_ADDR  0x3D4
-#define CRTCR_DATA  0x3D5
-// Cursor location High byte
-#define CRTCR_CH    0x0E 
-// Cursor location Low byte   
-#define CRTCR_CL    0x0F   
+#define VGA_COLOR_BLACK (uint8_t)0x00
+#define VGA_COLOR_BLUE	(uint8_t)0x01
+#define VGA_COLOR_GREEN	(uint8_t)0x02
+#define VGA_COLOR_CYAN	(uint8_t)0x03
+#define VGA_COLOR_RED	(uint8_t)0x04
+#define VGA_COLOR_MAG	(uint8_t)0x05
+#define VGA_COLOR_WHITE	(uint8_t)0x07
 
-typedef struct __attribute__((packed))
-{
-    char    ch;
-    uint8_t attr;
-} VGAchar_t;
+struct VGA_char {
+	char 	ascii;
+	uint8_t attr;
+} __attribute__((packed));
 
-// Starting address of VGA memory in RAM
-static VGAchar_t *const VGAMEM = (VGAchar_t *)0xB8000;
+/* Starting address of VGA memory in RAM. */
+static struct VGA_char *const VGA_MEM = (struct VGA_char *)0xB8000;
 
-// Put a character on screen
-void putc(char ch, uint8_t x, uint8_t y);
+void VGA_setmem(uint16_t offset, char ascii, uint8_t color);
 
-// Get cursor location
-uint16_t getcursorloc(void);
+uint16_t VGA_getcursorlocation(void);
 
-// Set cursor location
-void setcursorloc(uint16_t loc);
+void VGA_setcursorlocation(uint16_t location);
 
-// Write a sstring on screen
-void write(const char* string);
+/* Write a null-terminated string to the terminal. */
+void write(const char* ntstring, uint8_t color);
 
-#endif // VGA_DRIVER_H
+#endif /* ifdef VGA_DRIVER_H. */

@@ -19,5 +19,5 @@ void outb(uint16_t port, uint8_t value)
     asm volatile("outb %b0, %w1" : : "a"(value), "Nd"(port));
 }
 
-#endif /* ifdef IO_H. */
+#endif /* ifndef IO_H. */
 

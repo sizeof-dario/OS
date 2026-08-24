@@ -39,4 +39,4 @@ void VGA_setcursorlocation(uint16_t location);
 /* Write a null-terminated string to the terminal. */
 void write(const char* ntstring, uint8_t color);
 
-#endif /* ifdef VGA_DRIVER_H. */
+#endif /* ifndef VGA_DRIVER_H. */

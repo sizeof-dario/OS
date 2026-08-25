@@ -45,6 +45,34 @@ void idt_init()
     }
 }
 
+void pic_mask(uint16_t port, uint8_t mask)
+{
+    outb(port, mask);
+}
+
+void pic_init(
+	uint16_t command_port, 
+	uint16_t data_port, 
+	uint8_t icw1, 
+	uint8_t icw2, 
+	uint8_t icw3, 
+	uint8_t icw4,
+	uint8_t init_mask
+){
+    outb(command_port, icw1);
+    outb(data_port, icw2);
+    outb(data_port, icw3);
+    outb(data_port, icw4);
+
+    outb(data_port, init_mask);
+}
+
+void pic_remap()
+{
+    pic_init(0x20, 0x21, 0x11, 0x20, 0x04, 0x01, 0xFF);
+    pic_init(0xA0, 0XA1, 0X11, 0x28, 0x02, 0x01, 0xFF);
+}
+
 void enable_protected_interrupts()
 {
     idt_init();
@@ -54,7 +82,7 @@ void enable_protected_interrupts()
     idtr_v.limit = IDT_LENGTH - 1;
     lidt(&idtr_v);
 
-    // Remap PIC
+    pic_remap();
 
     // Adding memory to clobbered prevents GCC to reorder instructions.
     asm volatile("sti" : : : "memory");

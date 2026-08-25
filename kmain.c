@@ -5,8 +5,10 @@
 
 extern struct interrupt_descriptor IDT[IDT_LENGTH];
 
-void kmain(void)
+__attribute__((noreturn)) void kmain(void)
 {
+	enable_protected_interrupts();
+
 	write(EXAMPLETEXT, VGA_COLOR_WHITE);
 
 	while(1) {

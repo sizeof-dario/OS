@@ -2,6 +2,7 @@
 #define INT_H 1
 
 #include <stdint.h>
+#include "io.h"
 
 #define IDT_LENGTH 		(uint16_t)256
 
@@ -56,6 +57,20 @@ void isr_generic_error_code(struct interrupt_frame *frame, uint32_t error_code)
 	__attribute__((interrupt));
 
 void idt_init();
+
+void pic_mask(uint16_t port, uint8_t mask);
+
+void pic_init(
+	uint16_t command_port, 
+	uint16_t data_port, 
+	uint8_t icw1, 
+	uint8_t icw2, 
+	uint8_t icw3, 
+	uint8_t icw4,
+	uint8_t init_mask
+);
+
+void pic_remap();
 
 void enable_protected_interrupts();
 

@@ -13,13 +13,13 @@ build/int.o: EXTRA_FLAGS = -mgeneral-regs-only
 
 
 
-build/kernel.bin: $(OBJECTS) link.ld
+build/kernel.bin: $(OBJECTS) link.ld | build
 	$(LD) -T link.ld $(OBJECTS) -o $@ -Map=build/kernel.map && $(MAKE) clean_obj
 
-build/boot.o: src/boot.asm
+build/boot.o: src/boot.asm | build
 	$(AS) -f elf32 $< -o $@
 
-build/%.o:src/%.c
+build/%.o:src/%.c | build
 	$(CC) -ffreestanding -O0 -Iinclude $(EXTRA_FLAGS) -c $< -o $@
 
 
@@ -35,3 +35,7 @@ clean:
 
 disasm: build/kernel.bin
 	$(DA) -D -b binary -m i386 $<
+
+
+build:
+	mkdir -p build

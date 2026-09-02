@@ -1,26 +1,37 @@
-.PHONY: run clean disasm
-CROSS = $(HOME)/opt/cross/bin
+.PHONY: run clean clean_obj disasm
 
-kernel.bin: boot.o kmain.o VGAdriver.o int.o link.ld
-	$(CROSS)/i686-elf-ld -T link.ld boot.o VGAdriver.o int.o kmain.o -o kernel.bin -Map=kernel.map
+CC = $(HOME)/opt/cross/bin/i686-elf-gcc
+LD = $(HOME)/opt/cross/bin/i686-elf-ld
+AS = nasm
+DA = $(HOME)/opt/cross/bin/i686-elf-objdump
+QM = qemu-system-i386
 
-kmain.o: kmain.c
-	$(CROSS)/i686-elf-gcc -ffreestanding -O0 -c kmain.c -o kmain.o
+C_SOURCES = $(wildcard src/*.c)
+OBJECTS = build/boot.o $(patsubst src/%.c,build/%.o,$(C_SOURCES))
 
-VGAdriver.o: VGAdriver.c
-	$(CROSS)/i686-elf-gcc -ffreestanding -O0 -c VGAdriver.c -o VGAdriver.o
+build/int.o: EXTRA_FLAGS = -mgeneral-regs-only
 
-boot.o: boot.asm
-	nasm -f elf32 boot.asm -o boot.o
 
-int.o: int.c
-	$(CROSS)/i686-elf-gcc -ffreestanding -O0 -mgeneral-regs-only -c int.c -o int.o
 
-run: kernel.bin
-	qemu-system-i386 -drive file=kernel.bin,format=raw,index=0,media=disk -monitor stdio
+build/kernel.bin: $(OBJECTS) link.ld
+	$(LD) -T link.ld $(OBJECTS) -o $@ -Map=build/kernel.map && $(MAKE) clean_obj
+
+build/boot.o: src/boot.asm
+	$(AS) -f elf32 $< -o $@
+
+build/%.o:src/%.c
+	$(CC) -ffreestanding -O0 -Iinclude $(EXTRA_FLAGS) -c $< -o $@
+
+
+
+run: build/kernel.bin
+	$(QM) -drive file=$<,format=raw,index=0,media=disk -monitor stdio
+
+clean_obj:
+	rm -f $(OBJECTS)
 
 clean:
-	rm -f boot.o VGAdriver.o kmain.o int.o kernel.bin kernel.map
+	rm -f build/kernel.bin build/kernel.map
 
-disasm: kernel.bin
-	$(CROSS)/i686-elf-objdump -D -b binary -m i386 kernel.bin
+disasm: build/kernel.bin
+	$(DA) -D -b binary -m i386 $<

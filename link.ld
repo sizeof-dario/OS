@@ -6,7 +6,7 @@ SECTIONS
 
     .text :
     {
-        boot.o(.text)
+        build/boot.o(.text)
         *(.text)
 
     }

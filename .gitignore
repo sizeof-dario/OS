@@ -54,8 +54,8 @@ dkms.conf
 # debug information files
 *.dwo
 
-# raw binaries
-*.bin
+# rbuild
+build/
 
 # local settings
-.vscode
+.vscode/

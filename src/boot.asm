@@ -109,7 +109,7 @@ BITS 32
         ; reset stack
         mov     ax,     0x0010
         mov     ss,     ax
-        mov     esp,    0x000A0000      ; below VGA video memory
+        mov     esp,    0x00080000      ; below EBDA
 
         ; set other segment registers
         mov     ds,     ax

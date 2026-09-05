@@ -1,4 +1,4 @@
-#include "VGAdriver.h"
+#include "vga_driver.h"
 #include "int.h"
 
 #define EXAMPLETEXT "\nUnnamedOS (version 0.0.0)\n"

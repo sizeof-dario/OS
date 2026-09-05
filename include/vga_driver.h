@@ -1,7 +1,10 @@
 #ifndef VGA_DRIVER_H
 #define VGA_DRIVER_H 1
 
+/* Still needs refactioring. */
+
 #include <stdint.h>
+
 #include "io.h"
 
 #define VGA_WIDTH	(uint8_t)80

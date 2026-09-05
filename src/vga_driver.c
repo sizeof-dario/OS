@@ -1,4 +1,6 @@
-#include "VGAdriver.h"
+#include "vga_driver.h"
+
+/* Still needs refactioring. */
 
 void VGA_setmem(uint16_t offset, char ascii, uint8_t color)
 {

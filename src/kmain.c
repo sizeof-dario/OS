@@ -1,7 +1,7 @@
 #include "vga_driver.h"
 #include "int.h"
 
-#define EXAMPLETEXT "\nUnnamedOS (version 0.0.0)\n"
+#define EXAMPLETEXT "\nBifrost (version 0.0.0)\n"
 
 extern struct interrupt_descriptor IDT[IDT_LENGTH];
 

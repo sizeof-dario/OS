@@ -2,11 +2,11 @@
 
 > [!Note]
 > This README is intended as an introduction to Bifrost's first version up to completion. Since that's under development at this time, some of this file's claims may not match the current state of Bifrost.
-- [What is Bifrost?](what-is-bifrost)
-- [What are Bifrost specifications?](what-are-bifrost-specifications)
-- [How do I get Bifrost?](how-do-i-get-bifrost)
-- [Why "Bifrost"?](why-bifrost)
-- [What is Bifrost's license?](what-is-bifrosts-license)
+- [What is Bifrost?](#what-is-bifrost)
+- [What are Bifrost specifications?](#what-are-bifrost-specifications)
+- [How do I get Bifrost?](#how-do-i-get-bifrost)
+- [Why "Bifrost"?](#why-bifrost)
+- [What is Bifrost's license?](#what-is-bifrosts-license)
 
 ## What is Bifrost?
 Bifrost is an operating system built for learning purposes. It doesn't aim to be even remotely compared to a professional OS, or to have any distinctive trait or performance feature.
